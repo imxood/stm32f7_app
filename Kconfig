@@ -1,0 +1,12 @@
+source "Kconfig.zephyr"
+
+if HAS_STM32CUBE
+
+config SMALL_CAR
+	bool "car config"
+	select USE_STM32_LL_UTILS
+	select USE_STM32_LL_GPIO
+	select USE_STM32_LL_TIM
+	select USE_STM32_LL_USART
+
+endif # HAS_STM32CUBE

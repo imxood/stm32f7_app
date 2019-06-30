@@ -1,6 +1,6 @@
 source "Kconfig.zephyr"
 
-if HAS_STM32CUBE
+menu "Small Car Options"
 
 config SMALL_CAR
 	bool "car config"
@@ -9,4 +9,20 @@ config SMALL_CAR
 	select USE_STM32_LL_TIM
 	select USE_STM32_LL_USART
 
-endif # HAS_STM32CUBE
+if SMALL_CAR
+
+config SMALL_CAR_ENCODER_NAME
+	string "small car encoder name"
+	default "small_car_encoder"
+
+config SMALL_CAR_ENCODER_PSC
+	int "small car encoder psc"
+	default 0
+
+config SMALL_CAR_ENCODER_ARR
+	int "small car encoder arr"
+	default 10799
+
+endif # SMALL_CAR
+
+endmenu

@@ -5,9 +5,9 @@
 #include <stm32f7xx_ll_tim.h>
 #include <stm32f7xx_ll_gpio.h>
 
-#define ENCODER_NAME_1	"encoder_1"
-#define PWM_PSC		0
-#define PWM_ARR		10799
+#define ENCODER_NAME_1	CONFIG_SMALL_CAR_ENCODER_NAME
+#define PWM_PSC			CONFIG_SMALL_CAR_ENCODER_PSC
+#define PWM_ARR			CONFIG_SMALL_CAR_ENCODER_ARR
 
 #ifdef __cplusplus
 extern "C" {

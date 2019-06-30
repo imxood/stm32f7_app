@@ -4,13 +4,13 @@
 #include <timer_encoder.h>
 #include <soc.h>
 
-#define WHEEL_PWM_MAX	PWM_ARR
+#define WHEEL_PWM_MAX	CONFIG_SMALL_CAR_ENCODER_ARR
 
 LOG_MODULE_REGISTER(encoder_run, 4);
 
 static void monitor_task(void *p1, void *p2, void *p3)
 {
-	struct device* encoder_dev = device_get_binding(ENCODER_NAME_1);
+	struct device* encoder_dev = device_get_binding(CONFIG_SMALL_CAR_ENCODER_NAME);
 	if (encoder_dev != NULL) {
 		LOG_INF("Executing device_get_binding successed");
 	} else {
@@ -27,7 +27,7 @@ static void monitor_task(void *p1, void *p2, void *p3)
 
 static void encode_task(void *p1, void *p2, void *p3)
 {
-	struct device* encoder_dev = device_get_binding(ENCODER_NAME_1);
+	struct device* encoder_dev = device_get_binding(CONFIG_SMALL_CAR_ENCODER_NAME);
 	if (encoder_dev != NULL) {
 		LOG_INF("Executing device_get_binding successed");
 	} else {
@@ -35,7 +35,7 @@ static void encode_task(void *p1, void *p2, void *p3)
 		return;
 	}
 
-	int16_t  pwm_a = 0, pwm_b = WHEEL_PWM_MAX;
+	int16_t  pwm_a = 0, pwm_b = CONFIG_SMALL_CAR_ENCODER_PSC;
 	int8_t pwm_a_direction = 1, pwm_b_direction = -1;
 
 	while(1) {
@@ -45,35 +45,35 @@ static void encode_task(void *p1, void *p2, void *p3)
 		pwm_a = 1000;
 		pwm_b = WHEEL_PWM_MAX;
 
-		encoder_setPwm(encoder_dev, WheelLeftBack, pwm_a, pwm_b);
+		encoder_setPwm(encoder_dev, 0, pwm_a, pwm_b);
 
 		k_sleep(500);
 
 		pwm_a = 10000;
 		pwm_b = WHEEL_PWM_MAX;
 
-		encoder_setPwm(encoder_dev, WheelLeftBack, pwm_a, pwm_b);
+		encoder_setPwm(encoder_dev, 0, pwm_a, pwm_b);
 
 		k_sleep(500);
 
 		pwm_a = WHEEL_PWM_MAX;
 		pwm_b = 1000;
 
-		encoder_setPwm(encoder_dev, WheelLeftBack, pwm_a, pwm_b);
+		encoder_setPwm(encoder_dev, 0, pwm_a, pwm_b);
 
 		k_sleep(500);
 
 		pwm_a = WHEEL_PWM_MAX;
 		pwm_b = 10000;
 
-		encoder_setPwm(encoder_dev, WheelLeftBack, pwm_a, pwm_b);
+		encoder_setPwm(encoder_dev, 0, pwm_a, pwm_b);
 
 		k_sleep(500);
 
 		pwm_a = WHEEL_PWM_MAX;
 		pwm_b = WHEEL_PWM_MAX;
 
-		encoder_setPwm(encoder_dev, WheelLeftBack, pwm_a, pwm_b);
+		encoder_setPwm(encoder_dev, 0, pwm_a, pwm_b);
 
 		k_sleep(500);
 
@@ -101,5 +101,5 @@ static void encode_task(void *p1, void *p2, void *p3)
 	}
 }
 
-// K_THREAD_DEFINE(monitor_thread, 512, monitor_task, NULL, NULL, NULL, 0, 0, K_NO_WAIT);
-// K_THREAD_DEFINE(encode_thread, 512, encode_task, NULL, NULL, NULL, 0, 0, K_NO_WAIT);
+K_THREAD_DEFINE(monitor_thread, 512, monitor_task, NULL, NULL, NULL, 0, 0, K_NO_WAIT);
+K_THREAD_DEFINE(encode_thread, 512, encode_task, NULL, NULL, NULL, 0, 0, K_NO_WAIT);

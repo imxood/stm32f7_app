@@ -5,6 +5,8 @@
 #include <init.h>
 
 #include <logging/log.h>
+
+#include <syscall_handler.h>
 #include <timer_encoder.h>
 
 LOG_MODULE_REGISTER(sys, 4);

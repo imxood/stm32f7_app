@@ -162,10 +162,8 @@ def update_c_cpp_properties():
             if os.path.splitext(compile_item['file'])[-1].lower() == ".s":
                 continue
             command = compile_item['command']
-            defines = defines | set(map(lambda x: x[2:], filter(
-                lambda x: x.startswith('-D'), command.split())))
-            includePath = includePath | set(map(lambda x: get_real_path(
-                OUTPUT, x[2:]), filter(lambda x: x.startswith('-I'), command.split())))
+            defines = defines | set(map(lambda x: x[2:], filter(lambda x: x.startswith('-D'), command.split())))
+            includePath = includePath | set(filter(lambda x: x.startswith(ZEPHYR_BASE) is False, map(lambda x: get_real_path(OUTPUT, x[2:]), filter(lambda x: x.startswith('-I'), command.split()))))
 
     for path in ('zephyr/include/generated/autoconf.h', 'zephyr/include/generated/generated_dts_board_fixups.h', 'zephyr/include/generated/generated_dts_board_unfixed.h'):
         path = get_real_path(OUTPUT, path)
@@ -190,8 +188,8 @@ def update_c_cpp_properties():
     json_defines = data['configurations'][0]['defines']
     json_defines.extend(defines)
 
-    # json_includePath = data['configurations'][0]['includePath']
-    # json_includePath.extend(includePath)
+    json_includePath = data['configurations'][0]['includePath']
+    json_includePath.extend(includePath)
 
     # json_browsePath = data['configurations'][0]['browse']['path']
     # json_browsePath.extend(includePath)
@@ -282,6 +280,10 @@ def config():
     print("cmd: " + cmd)
     return os.system(cmd)
 
+def menuconfig():
+    cmd = "ninja -C {} menuconfig".format(OUTPUT)
+    print("cmd: " + cmd)
+    return os.system(cmd)
 
 def build():
     cmd = "ninja -v" if VERBOSE else "ninja"
@@ -304,15 +306,12 @@ def flash():
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-c', '--config', action='store_true', help="config project")
-    parser.add_argument(
-        '-b', '--build', action='store_true', help="build project")
-    parser.add_argument(
-        '-C', "--clean", action='store_true', help="clean project")
+    parser.add_argument('-c', '--config', action='store_true', help="config project")
+    parser.add_argument('-b', '--build', action='store_true', help="build project")
+    parser.add_argument('-C', "--clean", action='store_true', help="clean project")
     parser.add_argument('-f', '--flash', action='store_true', help="flash")
-    parser.add_argument('-v', '--verbose',
-                        action='store_true', help="verbose log")
+    parser.add_argument('-v', '--verbose', action='store_true', help="verbose log")
+    parser.add_argument('-m', '--menuconfig', action='store_true', help="menuconfig")
     return parser.parse_args()
 
 
@@ -331,6 +330,11 @@ if __name__ == "__main__":
 
     if args.config:
         if config():
+            os._exit(-1)
+        update()
+
+    if args.menuconfig:
+        if menuconfig():
             os._exit(-1)
         update()
 

@@ -1,12 +1,10 @@
-/*
- * Copyright (c) 2016 Intel Corporation.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+#include "main.h"
 
-#include <zephyr.h>
-#include <logging/log.h>
-
+#if CONFIG_ZTEST
+void test_main(void)
+#else
 void main(void)
+#endif
 {
+	test_userspace();
 }
